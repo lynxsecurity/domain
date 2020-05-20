@@ -1,4 +1,4 @@
-module github.com/lc/domain
+module github.com/lynxsecurity/domain
 
 go 1.14
 
