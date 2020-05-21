@@ -5,22 +5,36 @@
 /*
 Package domain is a simple domain name parsing library for golang.
 
-Usage looks like this:
-	```
-	d, err := domains.New("/tmp/tld.cache")
-	if err != nil {
-		log.Fatal(err)
+The following shows an example usage of the library:
+	package main
+
+	import (
+		"fmt"
+		"log"
+
+		"github.com/lynxsecurity/domain"
+	)
+
+	func main() {
+		d, err := domain.New("/tmp/tld.cache")
+		if err != nil {
+			log.Fatal(err)
+		}
+		record, err := d.Parse("www.hackerone.com")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Subdomain:", record.Subdomain)
+		fmt.Println("Name: ", record.Name)
+		fmt.Println("TLD:", record.TLD)
+		fmt.Println()
+		levels := d.Levels("long.subdomain.for.example.com")
+		fmt.Println("Levels")
+		for _, level := range levels {
+			fmt.Println("-", level)
+		}
 	}
-	record := d.Parse("www.hackerone.com")
-	// record.Subdomain = "www"
-	// record.Name = "hackerone"
-	// record.TLD = "com"
-	levels := d.Levels("long.subdomain.for.example.com")
-	for _, level := range levels {
-		fmt.Printf("%s,",level)
-	}
-	// output: long.subdomain.for.example.com,subdomain.for.example.com,for.example.com,example.com
-	```
+
 
 */
 package domain

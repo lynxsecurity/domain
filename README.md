@@ -8,17 +8,34 @@ domain is a simple domain name parser for golang.
 ## usage:
 
 ```golang
-d, err := domains.New("/tmp/tld.cache")
-if err != nil {
-	log.Fatal(err)
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/lynxsecurity/domain"
+)
+
+func main() {
+	d, err := domain.New("/tmp/tld.cache")
+	if err != nil {
+		log.Fatal(err)
+	}
+	record, err := d.Parse("www.hackerone.com")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Subdomain:", record.Subdomain)
+	fmt.Println("Name: ", record.Name)
+	fmt.Println("TLD:", record.TLD)
+	fmt.Println()
+	levels := d.Levels("long.subdomain.for.example.com")
+	fmt.Println("Levels")
+	for _, level := range levels {
+		fmt.Println("-", level)
+	}
 }
-record := d.Parse("www.hackerone.com")
-// record.Subdomain = "www"
-// record.Name = "hackerone"
-// record.TLD = "com"
-levels := d.Levels("super.long.subdomain.for.example.com")
-// fmt.Println(levels)
-// []string{"super.long.subdomain.for.example.com", "long.subdomain.for.example.com", "subdomain.for.example.com", "for.example.com", "example.com"}
 ```
 
 ## credits:
