@@ -1,3 +1,28 @@
+// Copyright 2020 Lynx Security LLC. All rights reserved.
+// Use of this source code is governed by an MIT license
+// that can be found in the LICENSE file
+
+/*
+Package domain is a simple domain name parsing library for golang.
+
+Usage looks like this:
+	```
+	d, err := domains.New("/tmp/tld.cache")
+	if err != nil {
+		log.Fatal(err)
+	}
+	record := d.Parse("www.hackerone.com")
+	// record.Subdomain = "www"
+	// record.Name = "hackerone"
+	// record.TLD = "com"
+	levels := d.Levels("long.subdomain.for.example.com")
+	for _, level := range levels {
+		fmt.Printf("%s,",level)
+	}
+	// output: long.subdomain.for.example.com,subdomain.for.example.com,for.example.com,example.com
+	```
+
+*/
 package domain
 
 import (
@@ -9,10 +34,6 @@ import (
 	"sync"
 	"time"
 )
-
-// Copyright 2020 Lynx Security LLC. All rights reserved.
-// Use of this source code is governed by an MIT license
-// that can be found in the LICENSE file
 
 // Domain is the core structure, a domain name parser
 type Domain struct {
