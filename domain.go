@@ -42,6 +42,7 @@ package domain
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -152,11 +153,11 @@ func (d *Domain) Levels(DomainName string) []string {
 
 // newCache downloads the TLD suffix list and creates a new cache file
 func newCache(cacheFile string) error {
-	cache, err := os.OpenFile(cacheFile, os.O_CREATE, 0644)
+	cachefp, err := os.Create(cacheFile)
 	if err != nil {
 		return fmt.Errorf("Could not create new cache file: %v", err)
 	}
-	defer cache.Close()
+	buf := bufio.NewWriter(cachefp)
 	client := &http.Client{Timeout: 15 * time.Second}
 	resp, err := client.Get("https://publicsuffix.org/list/public_suffix_list.dat")
 	if err != nil {
@@ -167,10 +168,19 @@ func newCache(cacheFile string) error {
 	for scan.Scan() {
 		line := scan.Text()
 		if line != "" && !strings.HasPrefix(line, "/") {
-			cache.WriteString(line)
-			cache.WriteString("\n")
+			_, err := buf.WriteString(line)
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, err = buf.WriteString("\n")
+			if err != nil {
+				log.Fatal(err)
+			}
+
 		}
 	}
+	buf.Flush()
+	cachefp.Close()
 	return nil
 }
 
